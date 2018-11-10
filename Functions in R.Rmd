@@ -1,0 +1,313 @@
+---
+title: "Assignment 3"
+author: "Glenn Niles"
+date: "August 22, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Functions in R
+
+
+### Debugging a function
+
+a. In this problem, we will debug a function to compute the mean of each column of a matrix.  We'll start by creating a *test suite*, a set of inputs where we know what the function should return, if it's working correctly.
+
+Use the following code to create matrices to help you test the function.
+```{r}
+test1 = matrix(1:9, nr = 3, nc = 3)
+test2 = matrix( c(3, 6, 1, 2), nr = 4, nc = 1 )
+test3 = matrix(c(-1, 0, 1), nr = 1, nc = 3 )
+```
+
+View the contents of `test1`, `test2`, and `test3`.
+```{r}
+test1
+test2
+test3
+```
+
+**Write** 3 sentences describing what our function should return when it is applied to each of the matrices in the test suite, if the function is working correctly.
+
+test1 should return (2,5,8).
+test2 should return (3).
+test3 should return (-1,0,1).
+
+b. Evaluate the following cell to store the function `matrixMeans` in memory.
+```{r}
+matrixMeans <- function(x){
+  # Computes the mean of each column of a matrix x.
+  total = 0
+  count = 0
+  toReturn = numeric( ncol(x) )
+
+  for(ii in 1:ncol(x)){
+    count = 0
+    total = 0
+    for(jj in 1:nrow(x)){
+      total = total + x[jj,ii]
+      toReturn[ii] = total
+      count = count + 1
+    }
+  }
+  return(toReturn/count)
+}
+
+```
+
+
+
+b. Run the function `matrixMeans` 3 times, with each of `test1`, `test2`, and `test3` as its argument.
+```{r}
+matrixMeans(test1)
+```
+```{r}
+matrixMeans(test2)
+```
+
+```{r}
+matrixMeans(test3)
+```
+
+c. The results on the test suite demonstrate that the function `matrixMeans` is not working correctly.  Let's begin by investigating the source of the error you got when analyzing `test2` and `test3`.
+
+c1. Based on what the error message says, do you have any initial thoughts about where the problem is or what sort of problem it is?  **Write your ideas here.**
+
+ The error message is telling me that the loops are trying to iterate outside the number of rows/columns of the matrices
+
+- At this stage of the debugging process, it's fine if your answer is, "I have no clue!"  But by reading the text of the error carefully, you can often make an educated guess.
+- By paying attention to error messages--and what you fixed to make them go away--you will gradually build your problem-solving skills in R and Python, making debugging faster and easier in the future.
+
+c2.  Open a web browser to a search engine.  Type `R` and then copy the text of the error message.
+
+- Sometimes it's helpful to copy the whole error message; other times it works better to copy just the portion after the `:`.
+
+Read at least 2 of the webpages that come up in the search results.  **Paste their URLs here.**
+
+https://stackoverflow.com/questions/15031338/subscript-out-of-bounds-general-definition-and-solution
+https://stackoverflow.com/questions/32528077/error-in-r-subscript-out-of-bounds
+
+
+Based on what you read, **what ideas do you have** about what sort of problem this error message represents?
+
+- If you have a specific idea about something to try fixing, proceed to part c4.
+- If you're unsure, do part c3 first.
+
+c3. Based on the lines
+`  for(ii in 1:ncol(x)){`
+`    for(jj in 1:nrow(x))`
+what does `ii` represent?  
+ii iterates through the rows of the matrix
+What does `jj` represent? 
+jj iterates through the columns of the matrix
+Insert the line
+`print( paste("ii =", ii))`
+immediately after `for(ii in 1:ncol(x)){`.  Evaluate the code cell containing the function again, and run the function with `test3` as input.  What value of `ii` immediately precedes the error message?
+1
+Look at the line 
+`total = total + x[ii, jj]`.
+How is the variable `ii` being used?  Does this match what `ii` represents in the `for` loop?
+
+c4. Change the code of the function to correct the issue that the error message is telling you about.  Evaluate the code cell and run the function with `test3` as input.  When you have successfully eliminated the error message, **explain** what change you made.
+
+```{r}
+matrixMeans(test3)
+```
+I flipped the order of how the loops iterate, going jj, ii instead of ii, jj. Still don't have the right answer though
+
+d. Run the updated function on `test2`.  
+```{r}
+matrixMeans(test2)
+```
+**What problem** do you see with the output?
+I Don't see one! I'm getting the answer I'm supposed to get. I don't know what I did wrong here.
+
+Insert print statements into the code to keep track of the values of `total` and `count`.  Use the results to help you identify how to change the code.  Edit the code.  Then evaluate the code and run it on `test2` to verify that your correction worked.
+
+
+```{r}
+matrixMeans(test2)
+```
+
+**Explain** what you changed and why.
+
+I didn't change anything
+
+e.  Run the function on `test1` and `test3`.
+```{r}
+matrixMeans(test1)
+matrixMeans(test3)
+```
+
+**What type** of object does `matrixMeans` return?  A number, a vector, a data frame, something else, ...?
+It looks like its returning a double.
+
+What type of object **should** `matrixMeans` return for the inputs `test1` and `test3`?
+A vector should be returned
+
+Modify the code so that `matrixMeans` returns a vector with the same length as the number of columns of its input.
+- The code `toReturn = numeric( ncol(x) )` creates an empty vector with length equal to the number of columns of `x`.
+- Use square bracket notation to set particular elements of `toReturn` equal to the desired output.
+
+Run the function on `test1` and `test3` again to verify that the function now returns the a vector of the correct length.
+
+
+```{r}
+matrixMeans(test1)
+matrixMeans(test3)
+```
+
+f. **Which elements** of the returned vectors are correct?
+None of them.
+
+Depending on what changes you made in part d, you may need to make additional changes to the function to ensure that all elements of the returned vectors are correct.  If so, focus on the results of the print statements that report the values of `total` and `count` to help you identify what changes to make.  Run the function.  
+
+```{r}
+matrixMeans(test1)
+matrixMeans(test2)
+matrixMeans(test3)
+```
+
+When you have verified that the function is working correctly, **explain** what you changed and why.
+
+I'll be honest it was a lot of moving lines around and special pleading to get this to work so I'll do my best to explain how I finally got here.
+The first part was switching the ii,jj to jj,ii to get rid of the out of bounds error.
+Creating the toReturn vector took a lot of trial and error to understand how it worked. I finally figured out to set the iith value of toReturn equal to total
+The biggest step(which in retrospect, the most obvious) was resetting the total and count values to 0 after each iteration to clear out the previous columns data.
+
+I had some weird shenanigans happening with my original return statement(ex. 6/3 was returning 2.333333333, 1/1 was returning 0) which was a headache. I'm guessing you can't just flat out divide a vector by a scalar in R? Or maybe it was me doing it in a return statement that caused it. Setting toReturn[ii] = total is what fixed it, which as I mentioned first, was a case of special pleading.
+
+So I still don't understand why I was getting the weird returns.
+
+### Creating your own function
+
+In this problem, you will create your own function to combine values in a vector of numbers so that all entries in a *corresponding* vector are greater than or equal to a threshold.  You will use this function on assignment 8.
+
+a. Start by creating a test vector of numbers.
+```{r}
+testVec = c(2,3,6,7,8)
+```
+
+Now, write a function that takes 2 arguments:
+
+- a vector of numbers, and
+- a number `n` that tells how many elements of the vector to combine.
+
+The function should return a vector where the first element is the sum of the first `n` elements of the input vector, and the rest of the vector is a copy of the other elements of the input vector.  For example, if the input vector is `(2, 3, 6, 7, 8)` and `n = 2`, then the output should be the vector `(5, 6, 7, 8)`.
+
+- Square bracket notation is likely to be helpful.  For example, x[3:5] will return elements 3 through 5 of a vector `x`.
+
+```{r}
+addElement = function(vec, n){
+    total = 0
+    toReturn = c()
+    for (i in 1:length(vec)){
+
+      if(i <= n){
+        total = total + vec[i]
+        toReturn=total
+      }
+
+      else if(i>n){
+        toReturn =  c(toReturn,vec[i])
+      }
+    }
+    toReturn = toReturn[!is.na(toReturn)]
+    return(toReturn)
+}
+```
+
+Test your function on the test vector with at least 2 different values of `n`.  If your function does not work correctly, go back and fix it.
+
+```{r}
+addElement(testVec, 2)
+```
+
+b. Next, write a function that analyzes the corresponding vector.  This function should take 2 arguments:
+- a vector of non-negative numbers in increasing order, and
+- a threshold value.  The threshold value should have a default value of 5.
+
+The function should return `n`, the index of the last element of the vector that is less than the threshold.  For example, if the input vector is `(0, 2, 4, 5, 7)` and the threshold is 5, then the function should return 3.
+
+```{r}
+analyzeVector = function(corrVec, threshold=5){
+    n= 0
+    for(i in 1:length(corrVec)){  
+        if (corrVec[i] == threshold){
+
+            n = i-1  
+        }
+        
+        if (threshold > length(corrVec)){
+          n = length(corrVec)
+        }
+    }
+    return(n)
+}
+```
+
+c. Design a test suite.  Your test suite should include
+
+- a vector where all of the numbers are greater than or equal to 5, 
+- a vector where the first number is less than 5 and the others are greater than or equal to 5, and
+- a vector with more than one number that is less than 5 and other numbers that are greater than or equal to 5.
+
+Optional:  For an extra challenge, include
+- a vector where all of the numbers are less than 5, and their sum is greater than or equal to 5, and
+- a vector where all of the numbers are less than 5, and their sum is less than 5.
+
+All of the vectors in your test suite should have the numbers in **increasing order.**  All of the numbers in your vectors should be non-negative.
+
+```{r}
+test0 = c(0,2,4,5,7)
+test1 = c(5:10)
+test2 = c(1,5:8)
+test3 = c(1,2,5:7)
+
+challenge1 = c(1,2,3,4)
+challenge2 = c(0,1,2)
+```
+
+d. Use your test suite to test your function.  Test it with both the default value of the threshold, and other values.  Based on the results of your tests, make corrections to your function as needed.  
+
+```{r}
+analyzeVector(test0)
+analyzeVector(test1)
+analyzeVector(test2)
+analyzeVector(test3)
+
+analyzeVector(challenge1)
+analyzeVector(challenge2)
+```
+
+e. Create a function with the following arguments:
+- `x`, a vector to combine
+- `y`, a vector to use to determine which elements of `x` should be combined
+- a threshold value.  The threshold value should have a default value of 5.
+
+This function should call your function from part b to determine `n`, the number of elements of `y` that are less than the threshold.  Then it should call your function from part a to combine the first `n` elements of `x`.
+
+```{r}
+combineVector = function(x,y,threshold=5){
+  n = analyzeVector(y)
+  xReturn = addElement(x,n)
+  
+  return(xReturn)
+}
+```
+
+f. Test your function from part e.  Use the test vectors you created in part c as the `y` vectors.  Make up your own vector(s) `x` of the same length as the `y` vectors.  Based on the results of your tests, make corrections to your function as needed.  
+
+```{r}
+x = c(1:5)
+combineVector(x,test0)
+combineVector(x,test1)
+combineVector(x,test2)
+combineVector(x,test3)
+
+combineVector(x, challenge1)
+combineVector(x, challenge2)
+```
